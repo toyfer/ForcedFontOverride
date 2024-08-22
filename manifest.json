@@ -1,14 +1,17 @@
 {
-    "manifest_version": 3,
-    "name": "フォント変更拡張機能",
-    "version": "1.0",
-    "description": "ページのフォントをCDNで指定したフォントに変更します",
-    "permissions": ["storage"],
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-      }
-    ],
-    "options_page": "options.html"
-  }
+  "manifest_version": 3,
+  "name": "フォント変更拡張機能",
+  "version": "1.0",
+  "description": "ページのフォントをCDNで指定したフォントに変更します",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "options_page": "options.html"
+}
