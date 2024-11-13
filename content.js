@@ -1,12 +1,19 @@
-// Service Workerの登録
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
       .then(() => console.log('Service Worker registered'))
       .catch(error => console.log('Service Worker registration failed:', error));
-  }
-  
-  chrome.storage.sync.get('selectedFontUrl', function(data) {
+}
+
+chrome.storage.sync.get(['selectedFontUrl', 'excludedUrls'], function(data) {
     if (data.selectedFontUrl) {
+        const currentUrl = window.location.href;
+        const excludedUrls = data.excludedUrls || [];
+
+        if (excludedUrls.some(url => currentUrl.includes(url))) {
+            console.log('Font overwriting is disabled for this URL:', currentUrl);
+            return;
+        }
+
         const link = document.createElement('link');
         link.href = data.selectedFontUrl;
         link.rel = 'stylesheet';
@@ -14,7 +21,6 @@ if ('serviceWorker' in navigator) {
 
         const fontName = new URL(data.selectedFontUrl).searchParams.get('family').split(':')[0].replace(/\+/g, ' ');
 
-        // アイコンフォントには適用しないスタイル
         const style = document.createElement('style');
         style.textContent = `
             *:not([class*="icon"]) {
@@ -24,5 +30,3 @@ if ('serviceWorker' in navigator) {
         document.head.appendChild(style);
     }
 });
-
-  

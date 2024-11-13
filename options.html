@@ -72,9 +72,15 @@
     <label for="fontUrl">Google Fonts URL</label>
     <input type="text" id="fontUrl" placeholder="Google Fonts URLを入力">
   </div>
+  <div class="form-group">
+    <label for="excludedUrls">除外するURL</label>
+    <input type="text" id="excludedUrls" placeholder="除外するURLを入力">
+  </div>
   <button id="save">保存</button>
+  <button id="saveExcludedUrls">除外URLを保存</button>
   <p>例: https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap</p>
   <div class="message" id="message"></div>
+  <div class="message" id="excludedUrlsMessage"></div>
   <script src="options.js"></script>
 </body>
 </html>
