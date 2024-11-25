@@ -1,10 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const fontUrlInput = document.getElementById('fontUrl');
-    const excludedUrlsInput = document.getElementById('excludedUrls');
+    const excludedUrlInput = document.getElementById('excludedUrl');
+    const addUrlButton = document.getElementById('addUrl');
+    const excludedUrlsList = document.getElementById('excludedUrlsList');
     const saveButton = document.getElementById('save');
     const saveExcludedUrlsButton = document.getElementById('saveExcludedUrls');
     const messageDiv = document.getElementById('message');
     const excludedUrlsMessageDiv = document.getElementById('excludedUrlsMessage');
+
+    let excludedUrls = [];
 
     // 現在のフォントURLを取得して表示
     chrome.storage.sync.get('selectedFontUrl', function(data) {
@@ -13,10 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 現在の除外URLを取得して表示
+    // 保存済みの除外URLを読み込む
     chrome.storage.sync.get('excludedUrls', function(data) {
         if (data.excludedUrls) {
-            excludedUrlsInput.value = data.excludedUrls.join(', ');
+            excludedUrls = data.excludedUrls;
+            renderExcludedUrls();
         }
     });
 
@@ -27,12 +32,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 除外URLのバリデーション
-    function validateExcludedUrls(urls) {
+    function validateExcludedUrl(url) {
         const regex = /^https?:\/\/[\w\-\.]+(\.[\w\-\.]+)+[/#?]?.*$/;
-        return urls.split(',').every(url => regex.test(url.trim()));
+        return regex.test(url);
     }
 
-    // 保存ボタンのクリックイベント
+    // 除外URLの表示を更新
+    function renderExcludedUrls() {
+        excludedUrlsList.innerHTML = '';
+        excludedUrls.forEach((url, index) => {
+            const urlItem = document.createElement('div');
+            urlItem.className = 'url-item';
+            urlItem.innerHTML = `
+                <span>${url}</span>
+                <button class="delete-url" data-index="${index}">削除</button>
+            `;
+            excludedUrlsList.appendChild(urlItem);
+        });
+    }
+
+    // 追加ボタンのクリックイベント
+    addUrlButton.addEventListener('click', function() {
+        const url = excludedUrlInput.value.trim();
+        if (url && validateExcludedUrl(url)) {
+            if (!excludedUrls.includes(url)) {
+                excludedUrls.push(url);
+                excludedUrlInput.value = '';
+                renderExcludedUrls();
+                excludedUrlInput.classList.remove('invalid');
+            }
+        } else {
+            excludedUrlInput.classList.add('invalid');
+        }
+    });
+
+    // 削除ボタンのクリックイベント
+    excludedUrlsList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-url')) {
+            const index = parseInt(e.target.dataset.index);
+            excludedUrls.splice(index, 1);
+            renderExcludedUrls();
+        }
+    });
+
+    // フォントURL保存ボタンのクリックイベント
     saveButton.addEventListener('click', function() {
         const fontUrl = fontUrlInput.value;
         messageDiv.textContent = '';
@@ -57,28 +100,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 除外URL保存ボタンのクリックイベント
     saveExcludedUrlsButton.addEventListener('click', function() {
-        const excludedUrls = excludedUrlsInput.value.split(',').map(url => url.trim());
-        excludedUrlsMessageDiv.textContent = '';
+        chrome.storage.sync.set({ excludedUrls: excludedUrls }, function() {
+            excludedUrlsMessageDiv.textContent = '除外URLが保存されました!';
+            excludedUrlsMessageDiv.classList.remove('error');
+            saveExcludedUrlsButton.disabled = true;
 
-        if (validateExcludedUrls(excludedUrlsInput.value)) {
-            chrome.storage.sync.set({ excludedUrls: excludedUrls }, function() {
-                excludedUrlsInput.classList.remove('invalid');
-                excludedUrlsMessageDiv.textContent = '除外URLが保存されました!';
-                excludedUrlsMessageDiv.classList.remove('error');
-                saveExcludedUrlsButton.disabled = true;
-
-                setTimeout(() => {
-                    saveExcludedUrlsButton.disabled = false;
-                }, 2000);
-            });
-        } else {
-            excludedUrlsInput.classList.add('invalid');
-            excludedUrlsMessageDiv.textContent = '有効なURLを入力してください。';
-            excludedUrlsMessageDiv.classList.add('error');
-        }
+            setTimeout(() => {
+                saveExcludedUrlsButton.disabled = false;
+            }, 2000);
+        });
     });
 
-    // フォームの入力時にバリデーションを実行
+    // フォントURL入力時のバリデーション
     fontUrlInput.addEventListener('input', function() {
         if (validateUrl(fontUrlInput.value)) {
             fontUrlInput.classList.remove('invalid');
@@ -87,12 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 除外URL入力時にバリデーションを実行
-    excludedUrlsInput.addEventListener('input', function() {
-        if (validateExcludedUrls(excludedUrlsInput.value)) {
-            excludedUrlsInput.classList.remove('invalid');
+    // 除外URL入力時のバリデーション
+    excludedUrlInput.addEventListener('input', function() {
+        if (validateExcludedUrl(excludedUrlInput.value.trim())) {
+            excludedUrlInput.classList.remove('invalid');
         } else {
-            excludedUrlsInput.classList.add('invalid');
+            excludedUrlInput.classList.add('invalid');
         }
     });
 });

@@ -1,5 +1,6 @@
 <!DOCTYPE html lang="ja">
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>フォント設定</title>
@@ -11,18 +12,22 @@
       background-color: #f7f7f7;
       color: #333;
     }
+
     h1 {
       font-size: 24px;
       margin-bottom: 20px;
     }
+
     .form-group {
       margin-bottom: 15px;
     }
+
     label {
       font-size: 16px;
       display: block;
       margin-bottom: 5px;
     }
+
     input[type="text"] {
       width: 100%;
       padding: 8px;
@@ -32,12 +37,15 @@
       border-radius: 4px;
       transition: border-color 0.3s;
     }
+
     input[type="text"]:focus {
       border-color: #007bff;
     }
+
     input[type="text"].invalid {
       border-color: #dc3545;
     }
+
     button {
       padding: 10px 20px;
       font-size: 16px;
@@ -48,24 +56,61 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
+
     button:hover {
       background-color: #0056b3;
     }
+
     p {
       font-size: 12px;
       color: #666;
       margin-top: 10px;
     }
+
     .message {
       margin-top: 10px;
       font-size: 14px;
       color: #28a745;
     }
+
     .error {
       color: #dc3545;
     }
+
+    .url-input-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .urls-list {
+      margin: 10px 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .url-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+
+    .delete-url {
+      background-color: #dc3545;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .delete-url:hover {
+      background-color: #c82333;
+    }
   </style>
 </head>
+
 <body>
   <h1>フォント設定</h1>
   <div class="form-group">
@@ -73,8 +118,15 @@
     <input type="text" id="fontUrl" placeholder="Google Fonts URLを入力">
   </div>
   <div class="form-group">
-    <label for="excludedUrls">除外するURL</label>
-    <input type="text" id="excludedUrls" placeholder="除外するURLを入力">
+    <label for="excludedUrl">除外するURL</label>
+    <div class="url-input-container">
+      <input type="text" id="excludedUrl" placeholder="除外するURLを入力">
+      <button id="addUrl">追加</button>
+    </div>
+    <div id="excludedUrlsList" class="urls-list">
+      <!-- 除外URLリストがここに動的に追加される -->
+    </div>
+    <button id="saveExcludedUrls">除外URLを保存</button>
   </div>
   <button id="save">保存</button>
   <button id="saveExcludedUrls">除外URLを保存</button>
@@ -83,4 +135,5 @@
   <div class="message" id="excludedUrlsMessage"></div>
   <script src="options.js"></script>
 </body>
+
 </html>

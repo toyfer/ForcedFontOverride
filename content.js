@@ -1,10 +1,10 @@
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch(error => console.log('Service Worker registration failed:', error));
+        .then(() => console.log('Service Worker registered'))
+        .catch(error => console.log('Service Worker registration failed:', error));
 }
 
-chrome.storage.sync.get(['selectedFontUrl', 'excludedUrls'], function(data) {
+chrome.storage.sync.get(['selectedFontUrl', 'excludedUrls'], function (data) {
     if (data.selectedFontUrl) {
         const currentUrl = window.location.href;
         const excludedUrls = data.excludedUrls || [];
