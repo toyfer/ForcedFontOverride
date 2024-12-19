@@ -38,14 +38,6 @@
       transition: border-color 0.3s;
     }
 
-    input[type="text"]:focus {
-      border-color: #007bff;
-    }
-
-    input[type="text"].invalid {
-      border-color: #dc3545;
-    }
-
     button {
       padding: 10px 20px;
       font-size: 16px;
@@ -109,6 +101,22 @@
       background-color: #c82333;
     }
   </style>
+  <style>
+    /* 追加スタイル */
+    .file-input-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .file-input-container input[type="file"] {
+      display: none;
+    }
+    
+    .file-input-container label {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
@@ -126,12 +134,17 @@
     <div id="excludedUrlsList" class="urls-list">
       <!-- 除外URLリストがここに動的に追加される -->
     </div>
-    <button id="saveExcludedUrls">除外URLを保存</button>
+    <p>部分一致で除外されます。例えば、"example.com" を除外すると、"example.com/page" も除外されます。</p>
+    <div class="file-input-container">
+      <input type="file" id="importUrls" accept=".txt">
+      <label for="importUrls" class="button">除外URLをインポート</label>
+    </div>
+    <button id="exportUrls">除外URLをエクスポート</button>
   </div>
   <button id="save">保存</button>
   <p>例: https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap</p>
-  <div class="message" id="message"></div>
-  <div class="message" id="excludedUrlsMessage"></div>
+  <div id="message" class="message"></div>
+  <div id="excludedUrlsMessage" class="message"></div>
   <script src="options.js"></script>
 </body>
 
